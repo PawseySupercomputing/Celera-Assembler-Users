@@ -29,6 +29,7 @@ which will generate a file called ecoli-untrimed.frg for later use.
 Then to run the trimming test, submit the following script by
         sbatch job_script_trim.slurm
 where job_script_trim.slurm is
+
 	#!/bin/bash -l
       	#SBATCH --nodes=1 
       	#SBATCH --partition=workq
@@ -47,6 +48,7 @@ where job_script_trim.slurm is
 Lastly, the assembly test is submitted by 
 	sbatch job_script_assembly.slurm
 and the job script is
+
       	#!/bin/bash -l
       	#SBATCH --nodes=1 
       	#SBATCH --partition=workq
