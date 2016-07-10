@@ -1,0 +1,510 @@
+208d207
+<     $var = "gridEngineTimeOption"          if ($var eq "gridEngineTimeOption");
+267d265
+<         setGlobal("gridEngineTimeOption",         "l walltime=ARRAY_WALLTIME");                                 
+285d282
+<         setGlobal("gridEngineTimeOption",         "-l h_rt=ARRAY_WALLTIME");                                 
+303d299
+<         setGlobal("gridEngineTimeOption",         "-W ARRAY_WALLTIME");                                 
+314,332d309
+<     if (($var eq "gridEngine") && ($val eq "SLURM")) {
+<         setGlobal("gridEngineSubmitCommand",      "sbatch");                                        
+<         setGlobal("gridEngineHoldOption",         "--dependency=afterok:\"WAIT_TAG\""); 
+<         setGlobal("gridEngineHoldOptionNoArray",  "--dependency=afterok:\"WAIT_TAG\""); 
+<         setGlobal("gridEngineSyncOption",         "");                                 
+<         setGlobal("gridEngineNameOption",         "-D `pwd` -J");                                   
+<         setGlobal("gridEngineArrayOption",        "-N ARRAY_JOBS"); 
+<         setGlobal("gridEngineTimeOption",         "-t ARRAY_WALLTIME"); 
+<         setGlobal("gridEngineArrayName",          "ARRAY_NAME\[ARRAY_JOBS\]");                      
+<         setGlobal("gridEngineOutputOption",       "-o");
+<         setGlobal("gridEnginePropagateCommand",   "scontrol update Dependency=afterok:\"WAIT_TAG\" job=");  
+<         setGlobal("gridEngineNameToJobIDCommand", "squeue -h -o\%F -n \"WAIT_TAG\" | uniq");  
+<         setGlobal("gridEngineNameToJobIDCommandNoArray", "squeue -h -o\%i -n \"WAIT_TAG\""); 
+<         setGlobal("gridEngineTaskID",             "ALPS_APP_PE");                         
+<         setGlobal("gridEngineArraySubmitID",      "%A_%a");                                     
+<         setGlobal("gridEngineJobID",              "SLURM_JOB_ID");                               
+<     }
+< 
+< 
+462d438
+<     $global{"gridEngineTimeOption"}                 = "-l h_rt=ARRAY_WALLTIME";                                 
+528,538d503
+<     #####  Cluster setups 
+<    
+<     $global{"coresPerNode"}                  = 24; 
+<     $synops{"coresPerNode"}                  = "Number of cores per node to use when computing on a cluster with a batch system";
+< 
+<     $global{"memPerNode"}                    = 64; 
+<     $synops{"memPerNode"}                    = "Total memory per node (GB) when computing on a cluster with a batch system";
+< 
+<     $global{"walltimeLimit"}                  = "01:00:00"; 
+<     $synops{"walltimeLimit"}                  = "Walltime limit for a standard job when computing on a cluster with a batch system";
+< 
+1499,1500c1464
+<     $arrayJobName =~ s/ARRAY_JOBS/$maxLimit/g;
+<     $arrayJobName =~ s/ARRAY_WALLTIME/$maxLimit/g;
+---
+>     $arrayJobName =~ s/ARRAY_JOBS/1-$maxLimit/g;
+1517,1522d1480
+< sub getGridTimeOption($$) {
+<     my $name = shift @_;
+<     my $maxLimit = shift @_;
+<     return buildGridArray($name, $maxLimit, "gridEngineTimeOption");
+< }
+< 
+1532c1490
+<     print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>     print F "#!" . getGlobal("shell") . "\n";
+1571c1529
+<         if (getGlobal("gridEngine") eq "LSF" || getGlobal("gridEngine") eq "PBS" || getGlobal("gridEngine") eq "SLURM"){
+---
+>         if (getGlobal("gridEngine") eq "LSF" || getGlobal("gridEngine") eq "PBS"){
+1911c1869
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper ";
+---
+>         $cmd  = "$bin/gatekeeper ";
+1927,1929d1884
+<     my $ecrPartitionThreads        = getGlobal("coresPerNode");
+<     my $walltime = getGlobal("walltimeLimit");
+< 
+1984c1939
+<                     if (runCommand($wrk, "aprun -q -n 1 $bin/sffToCA -libraryname $nam -linker flx -linker titanium -insertsize 3000 300 -output $frg $sff > $frg.err 2>&1")) {
+---
+>                     if (runCommand($wrk, "$bin/sffToCA -libraryname $nam -linker flx -linker titanium -insertsize 3000 300 -output $frg $sff > $frg.err 2>&1")) {
+1995c1950
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper ";
+---
+>         $cmd  = "$bin/gatekeeper ";
+2018c1973
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper -a -v $vi -o $wrk/$asm.gkpStore ";
+---
+>         $cmd  = "$bin/gatekeeper -a -v $vi -o $wrk/$asm.gkpStore ";
+2532c2487
+<             $cmd = "aprun -q -n 1 -d $merylThreads $bin/meryl ";
+---
+>             $cmd  = "$bin/meryl ";
+2549c2504
+<                 $cmd = "aprun -q -n 1 $bin/estimate-mer-threshold ";
+---
+>                 $cmd  = "$bin/estimate-mer-threshold ";
+2570c2525
+<                 $cmd = "aprun -q -n 1 $bin/meryl ";
+---
+>                 $cmd  = "$bin/meryl ";
+2616c2571
+<                 $cmd = "aprun -q -n 1 $bin/meryl ";
+---
+>                 $cmd  = "$bin/meryl ";
+2673c2628
+<             $cmd = "aprun -q -n 1 $bin/meryl ";
+---
+>             $cmd  = "$bin/meryl ";
+2858c2813
+<         print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>         print F "#!" . getGlobal("shell") . "\n";
+2862c2817
+<         print F "jobid=\$(($taskID+1))\n";
+---
+>         print F "jobid=\$$taskID\n";
+2945,2946d2899
+<             my $mbtThreads   = getGlobal("mbtThreads");
+<             my $timeOpt = getGridTimeOption("mbt_$asm$gridName", getGlobal("walltimeLimit"));
+2949,2950c2902,2904
+<             $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $mbtJobs -d $mbtThreads $wrk/0-mertrim/mertrim.sh' | $submitCommand $grid $gridMerTrim $nameOption \"$jobName\" $arrayOpt $timeOpt\\\n";
+<             $cmd .= "  $outputOption $wrk/0-mertrim/$asm.merTrim.$submitTaskID.sge.err \n";
+---
+>             $cmd  = "$submitCommand $grid $gridMerTrim $nameOption \"$jobName\" $arrayOpt \\\n";
+>             $cmd .= "  $outputOption $wrk/0-mertrim/$asm.merTrim.$submitTaskID.sge.err \\\n";
+>             $cmd .= "  $wrk/0-mertrim/mertrim.sh\n";
+2979c2933
+<         $cmd = "aprun -q -n 1 $bin/merTrimApply \\\n";
+---
+>         $cmd  = "$bin/merTrimApply \\\n";
+3120c3074
+<     print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>     print F "#!" . getGlobal("shell") . "\n";
+3122c3076
+<     print F "jobid=\$(($taskID+1))\n";
+---
+>     print F "jobid=\$$taskID\n";
+3152c3106
+<     print F "  mkdir -p $wrk/$outDir/seeds\n";
+---
+>     print F "  mkdir $wrk/$outDir/seeds\n";
+3183c3137
+<     print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>     print F "#!" . getGlobal("shell") . "\n";
+3185c3139
+<     print F "jobid=\$(($taskID+1))\n";
+---
+>     print F "jobid=\$$taskID\n";
+3215c3169
+<     print F "  mkdir -p $wrk/$outDir/olaps\n";
+---
+>     print F "  mkdir $wrk/$outDir/olaps\n";
+3280,3281d3233
+< 		my $merOverlapperThreads=getGlobal("merOverlapperThreads");
+<                 my $timeOpt = getGridTimeOption("mer_$asm$gridName", getGlobal("walltimeLimit"));
+3284,3285c3236,3238
+<                 $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $ovmJobs -d $merOverlapperThreads $wrk/$outDir/overmerry.sh' | $submitCommand $grid $gridOverlap $nameOption \"$jobName\" $arrayOpt $timeOpt\\\n";
+<                 $cmd .= "  $outputOption $wrk/$outDir/seeds/$submitTaskID.err \n";
+---
+>                 $cmd  = "$submitCommand $grid $gridOverlap $nameOption \"$jobName\" $arrayOpt \\\n";
+>                 $cmd .= "  $outputOption $wrk/$outDir/seeds/$submitTaskID.err \\\n";
+>                 $cmd .= "  $wrk/$outDir/overmerry.sh\n";
+3313c3266
+< 	#$cmd  = "$bin/overlapStore";
+---
+>         #$cmd  = "$bin/overlapStore";
+3320c3273
+<         $cmd = "aprun -q -n 1 $bin/overlapStoreBuild";
+---
+>         $cmd  = "$bin/overlapStoreBuild";
+3373,3374d3325
+< 	    my $merOverlapperThreads=getGlobal("merOverlapperThreads");
+<             my $timeOpt = getGridTimeOption("mer_$asm$gridName", getGlobal("walltimeLimit"));
+3377,3378c3328,3330
+<             $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $ovmJobs -d $merOverlapperThreads $wrk/$outDir/olap-from-seeds.sh' | $submitCommand $grid $gridOverlap $nameOption \"$jobName\" $arrayOpt $timeOpt\\\n";
+<             $cmd .= "  $outputOption $wrk/$outDir/olaps/$submitTaskID.err \n";
+---
+>             $cmd  = "$submitCommand $grid $gridOverlap $nameOption \"$jobName\" $arrayOpt \\\n";
+>             $cmd .= "  $outputOption $wrk/$outDir/olaps/$submitTaskID.err \\\n";
+>             $cmd .= "  $wrk/$outDir/olap-from-seeds.sh\n";
+3477c3429
+<     print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>     print F "#!" . getGlobal("shell") . "\n";
+3481c3433
+<     print F "jobid=\$(($taskID+1))\n";
+---
+>     print F "jobid=\$$taskID\n";
+3496c3448
+<     print F "  mkdir -p $wrk/$outDir/\$bat\n";
+---
+>     print F "  mkdir $wrk/$outDir/\$bat\n";
+3552c3504
+<         $cmd = "aprun -q -n 1 $bin/overlap_partition \\\n";
+---
+>         $cmd  = "$bin/overlap_partition \\\n";
+3598,3599d3549
+<         my $ovlThreads        = getGlobal("ovlThreads");
+<         my $timeOpt = getGridTimeOption("ovl_$asm$gridName", getGlobal("walltimeLimit"));
+3602,3603c3552,3554
+<         $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $jobs -d $ovlThreads $wrk/$outDir/overlap.sh' | $submitCommand $grid $gridOverlap $nameOption \"$jobName\" $arrayOpt $timeOpt\\\n";
+<         $cmd .= "  $outputOption $wrk/$outDir/$submitTaskID.out \n";
+---
+>         $cmd  = "$submitCommand $grid $gridOverlap $nameOption \"$jobName\" $arrayOpt \\\n";
+>         $cmd .= "  $outputOption $wrk/$outDir/$submitTaskID.out \\\n";
+>         $cmd .= "  $wrk/$outDir/overlap.sh\n";
+3737c3688
+<     $cmd = "aprun -q -n 1 $bin/overlapStoreBuild ";
+---
+>     $cmd  = "$bin/overlapStoreBuild ";
+3806c3757
+<         $cmd = "aprun -q -n 1 $bin/initialTrim \\\n";
+---
+>         $cmd  = "$bin/initialTrim \\\n";
+3860c3811
+<         $cmd = "aprun -q -n 1 $bin/overlapStoreBuild ";
+---
+>         $cmd  = "$bin/overlapStoreBuild ";
+3901c3852
+<             $cmd = "aprun -q -n 1 $bin/overlapStoreBuild \\\n";
+---
+>             $cmd  = "$bin/overlapStoreBuild \\\n";
+3929c3880
+<         $cmd = "aprun -q -n 1 $bin/deduplicate \\\n";
+---
+>         $cmd  = "$bin/deduplicate \\\n";
+3972c3923
+<         $cmd = "aprun -q -n 1 $bin/finalTrim \\\n";
+---
+>         $cmd  = "$bin/finalTrim \\\n";
+3996c3947
+<             $cmd = "aprun -q -n 1 $bin/chimera \\\n";
+---
+>             $cmd  = "$bin/chimera \\\n";
+4051,4052c4002,4003
+<         print F "#!" . getGlobal("shell") ." -l" . "\n\n";
+<         print F "jobid=\$(($taskID+1))\n";
+---
+>         print F "#!" . getGlobal("shell") . "\n\n";
+>         print F "jobid=\$$taskID\n";
+4114,4115d4064
+<             my $numThreads  = getGlobal("frgCorrThreads");
+<             my $timeOpt = getGridTimeOption("ovl_$asm$gridName", getGlobal("walltimeLimit"));
+4118c4067
+<             $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $jobs -d $numThreads $wrk/3-overlapcorrection/frgcorr.sh' | $submitCommand $grid $gridFragmentCorrection $nameOption \"$jobName\" $arrayOpt $timeOpt";
+---
+>             $cmd  = "$submitCommand $grid $gridFragmentCorrection $nameOption \"$jobName\" $arrayOpt ";
+4119a4069
+>             $cmd .= "$wrk/3-overlapcorrection/frgcorr.sh\n";
+4168c4118
+<         $cmd = "aprun -q -n 1 $bin/cat-corrects ";
+---
+>         $cmd  = "$bin/cat-corrects ";
+4205,4207c4155
+<         print F "#!" . getGlobal("shell") ." -l" . "\n";
+<         print F "\n";
+<         print F "jobid=\$(($taskID+1))\n";
+---
+>         print F "jobid=\$$taskID\n";
+4258,4261c4206
+<             my $arrayOpt2=getGlobal("coresPerNode");
+<             my $arrayOpt = getGridArrayOption("ovc_$asm$gridName", ceil($jobs/$arrayOpt2));
+< 	    $arrayOpt2 = ($jobs < $arrayOpt2) ? $jobs : $arrayOpt2;
+<             my $timeOpt = getGridTimeOption("ovc_$asm$gridName", getGlobal("walltimeLimit"));
+---
+>             my $arrayOpt = getGridArrayOption("ovc_$asm$gridName", $jobs);
+4264c4209
+<             $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $jobs -N $arrayOpt2 $wrk/3-overlapcorrection/ovlcorr.sh' | $submitCommand $grid $gridOverlapCorrection $nameOption \"$jobName\" $arrayOpt $timeOpt";
+---
+>             $cmd  = "$submitCommand $grid $gridOverlapCorrection $nameOption \"$jobName\" $arrayOpt ";
+4265a4211
+>             $cmd .= "$wrk/3-overlapcorrection/ovlcorr.sh\n";
+4312c4258
+<         $cmd = "aprun -q -n 1 $bin/cat-erates ";
+---
+>         $cmd  = "$bin/cat-erates ";
+4321c4267
+<         $cmd = "aprun -q -n 1 $bin/overlapStore ";
+---
+>         $cmd  = "$bin/overlapStore ";
+4414,4415d4359
+<     my $classifyMatesThreads        = getGlobal("coresPerNode");
+<     my $classifyMatesMem        = getGlobal("memPerNode");
+4425c4369
+<         print F "#!/bin/sh -l\n";
+---
+>         print F "#!/bin/sh\n";
+4429c4373
+<         print F "  aprun -q -n 1 -d $$classifyMatesThreads $bin/classifyMates \\\n";
+---
+>         print F "  $bin/classifyMates \\\n";
+4432,4433c4376,4377
+<         print F "    -t $classifyMatesThreads \\\n";
+<         print F "    -m $classifyMatesMem \\\n";
+---
+>         print F "    -t 8 \\\n";
+>         print F "    -m 128 \\\n";
+4455c4399
+<     print F "#!/bin/sh -l\n";
+---
+>     print F "#!/bin/sh\n";
+4457c4401
+<     print F "aprun -q -n 1 $bin/classifyMatesApply \\\n";
+---
+>     print F "$bin/classifyMatesApply \\\n";
+4465c4409
+<     print F "aprun -q -n 1 $bin/gatekeeper --edit \\\n";
+---
+>     print F "$bin/gatekeeper --edit \\\n";
+4507c4451
+<         $cmd = "aprun -q -n 1 $bin/removeMateOverlap -gkp $wrk/$asm.gkpStore -ovl $wrk/$asm.ovlStore";
+---
+>         $cmd = "$bin/removeMateOverlap -gkp $wrk/$asm.gkpStore -ovl $wrk/$asm.ovlStore";
+4543c4487
+<         $cmd = "aprun -q -n 1 -d $th $bin/bogart ";
+---
+>         $cmd  = "$bin/bogart ";
+4560c4504
+<         $cmd = "aprun -q -n 1 $bin/buildUnitigs ";
+---
+>         $cmd  = "$bin/buildUnitigs ";
+4573c4517
+<         $cmd = "aprun -q -n 1 $bin/unitigger ";
+---
+>         $cmd  = "$bin/unitigger ";
+4611c4555
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper ";
+---
+>         $cmd  = "$bin/gatekeeper ";
+4634c4578
+<     print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>     print F "#!" . getGlobal("shell") . "\n";
+4636c4580
+<     print F "jobid=\$(($taskID+1))\n";
+---
+>     print F "jobid=\$$taskID\n";
+4722,4725c4666
+<         my $arrayOpt2=getGlobal("coresPerNode");
+<         my $arrayOpt = getGridArrayOption("ovc_$asm$gridName", ceil($jobs/$arrayOpt2));
+< 	$arrayOpt2 = ($jobs < $arrayOpt2) ? $jobs : $arrayOpt2;
+<         my $timeOpt = getGridTimeOption("ovc_$asm$gridName", getGlobal("walltimeLimit"));
+---
+>         my $arrayOpt = getGridArrayOption("ovc_$asm$gridName", $jobs);
+4728c4669
+<         $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $jobs -N $arrayOpt2 $wrk/5-consensus/consensus.sh' | $submitCommand $grid $gridConsensus $nameOption \"$jobName\" $arrayOpt $timeOpt ";
+---
+>         $cmd  = "$submitCommand $grid $gridConsensus $nameOption \"$jobName\" $arrayOpt ";
+4729a4671
+>         $cmd .= "$wrk/5-consensus/consensus.sh\n";
+4841c4783
+<         $cmd = "aprun -q -n 1 $bin/tigStore";
+---
+>         $cmd  = "$bin/tigStore";
+4866c4808
+<         $cmd = "aprun -q -n 1 $bin/tigStore \\\n";
+---
+>         $cmd  = "$bin/tigStore \\\n";
+4889c4831
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper \\\n";
+---
+>         $cmd  = "$bin/gatekeeper \\\n";
+4908c4850
+<             $cmd = "aprun -q -n 1 $bin/splitUnitigs \\\n";
+---
+>             $cmd  = "$bin/splitUnitigs \\\n";
+4920c4862
+<             $cmd = "aprun -q -n 1 $bin/utgcnsfix \\\n";
+---
+>             $cmd  = "$bin/utgcnsfix \\\n";
+4940c4882
+<         $cmd = "aprun -q -n 1 $bin/computeCoverageStat \\\n";
+---
+>         $cmd  = "$bin/computeCoverageStat \\\n";
+4969c4911
+<         $cmd = "aprun -q -n 1 $bin/markRepeatUnique \\\n";
+---
+>         $cmd  = "$bin/markRepeatUnique \\\n";
+5076c5018
+<     $cmd = "aprun -q -n 1 $bin/cgw $ckp \\\n";
+---
+>     $cmd  = "$bin/cgw $ckp \\\n";
+5111c5053
+<             $cmd = "aprun -q -n 1 $bin/tigStore \\\n";
+---
+>             $cmd  = "$bin/tigStore \\\n";
+5155,5156d5096
+<     my $ecrPartitionThreads        = getGlobal("coresPerNode");
+< 
+5158c5098
+<         $cmd = "aprun -q -n 1 $bin/extendClearRangesPartition ";
+---
+>         $cmd  = "$bin/extendClearRangesPartition ";
+5163c5103
+<         $cmd .= " -N $ecrPartitionThreads ";
+---
+>         $cmd .= " -N 4 ";
+5204c5144
+<                 print F "#!" . getGlobal("shell") ." -l" . "\n\n";
+---
+>                 print F "#!" . getGlobal("shell") . "\n\n";
+5213c5153
+<                 print F "aprun -q -n 1 $bin/extendClearRanges \\\n";
+---
+>                 print F "$bin/extendClearRanges \\\n";
+5278c5218
+<     $cmd = "aprun -q -n 1 $bin/gatekeeper \\\n";
+---
+>     $cmd  = "$bin/gatekeeper \\\n";
+5393c5333
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper -P $wrk/7-CGW/$asm.partitioning $wrk/$asm.gkpStore ";
+---
+>         $cmd  = "$bin/gatekeeper -P $wrk/7-CGW/$asm.partitioning $wrk/$asm.gkpStore ";
+5416c5356
+<     print F "#!" . getGlobal("shell") ." -l" . "\n";
+---
+>     print F "#!" . getGlobal("shell") . "\n";
+5418c5358
+<     print F "jobid=\$(($taskID+1))\n";
+---
+>     print F "jobid=\$$taskID\n";
+5498,5501c5438
+<         my $arrayOpt2=getGlobal("coresPerNode");
+<         my $arrayOpt = getGridArrayOption("ctg_$asm$gridName", ceil($jobs/$arrayOpt2));
+< 	$arrayOpt2 = ($jobs < $arrayOpt2) ? $jobs : $arrayOpt2;
+<         my $timeOpt = getGridTimeOption("ctg_$asm$gridName", getGlobal("walltimeLimit"));
+---
+>         my $arrayOpt = getGridArrayOption("ctg_$asm$gridName", $jobs);
+5504c5441
+<         $cmd  = "echo -e '#!/bin/bash -l \n aprun -q -b -n $jobs -N $arrayOpt2 $wrk/8-consensus/consensus.sh' | $submitCommand $grid $gridConsensus $nameOption \"$jobName\" $arrayOpt $timeOpt ";
+---
+>         $cmd  = "$submitCommand $grid $gridConsensus $nameOption \"$jobName\" $arrayOpt ";
+5505a5443
+>         $cmd .= "$wrk/8-consensus/consensus.sh\n";
+5640c5578
+<         $cmd = "aprun -q -n 1 $bin/terminator";
+---
+>         $cmd  = "$bin/terminator";
+5657c5595
+<     my $asmOutputFasta = "aprun -q -n 1 $bin/asmOutputFasta";
+---
+>     my $asmOutputFasta = "$bin/asmOutputFasta";
+5672c5610
+<         $cmd = "aprun -q -n 1 $bin/dumpSingletons ";
+---
+>         $cmd  = "$bin/dumpSingletons ";
+5695c5633
+<             if (runCommand("$termDir", "aprun -q -n 1 $bin/buildPosMap -o $asm -g $wrk/$asm.gkpStore < $termDir/$asm.asm > $termDir/buildPosMap.err 2>&1")) {
+---
+>             if (runCommand("$termDir", "$bin/buildPosMap -o $asm -g $wrk/$asm.gkpStore < $termDir/$asm.asm > $termDir/buildPosMap.err 2>&1")) {
+5715,5718c5653,5656
+<         $cmd .= "aprun -q -n 1 $bin/fragmentDepth -min       0 -max    3000 < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram1 && ";
+<         $cmd .= "aprun -q -n 1 $bin/fragmentDepth -min    3001 -max   10000 < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram2 && ";
+<         $cmd .= "aprun -q -n 1 $bin/fragmentDepth -min   10001 -max 1000000 < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram3 && ";
+<         $cmd .= "aprun -q -n 1 $bin/fragmentDepth -min 1000001              < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram4 ";
+---
+>         $cmd .= "$bin/fragmentDepth -min       0 -max    3000 < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram1 && ";
+>         $cmd .= "$bin/fragmentDepth -min    3001 -max   10000 < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram2 && ";
+>         $cmd .= "$bin/fragmentDepth -min   10001 -max 1000000 < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram3 && ";
+>         $cmd .= "$bin/fragmentDepth -min 1000001              < $termDir/$asm.posmap.frgscf.sorted > $termDir/$asm.posmap.frgscf.histogram4 ";
+5795c5733
+<         if (runCommand("$termDir", "aprun -q -b -n 1 $perl $bin/caqc.pl -euid $qcOptions $termDir/$asm.asm")) {
+---
+>         if (runCommand("$termDir", "$perl $bin/caqc.pl -euid $qcOptions $termDir/$asm.asm")) {
+5854d5791
+<         my $merylThreads = getGlobal("merylThreads");
+5857c5794
+<             $cmd  = "aprun -q -n 1 -d $merylThreads $bin/meryl -B -C -m $ms -threads $merylThreads -memory $mem $verbose ";
+---
+>             $cmd  = "$bin/meryl -B -C -m $ms -threads 4 -memory $mem $verbose ";
+5867c5804
+<             $cmd  = "aprun -q -n 1 -d $merylThreads $bin/meryl -B -C -m $ms -threads  $merylThreads -memory $mem $verbose ";
+---
+>             $cmd  = "$bin/meryl -B -C -m $ms -threads 4 -memory $mem $verbose ";
+5895c5832
+<             $cmd  = "aprun -q -n 1 -d $merylThreads $bin/meryl -B -C -m $ms -threads $merylThreads -segments $merylThreads $verbose ";
+---
+>             $cmd  = "$bin/meryl -B -C -m $ms -threads 4 -segments 4 $verbose ";
+5906c5843
+<             $cmd  = "aprun -q -n 1 -d $merylThreads $bin/meryl -B -C -m $ms -threads $merylThreads -segments $merylThreads $verbose ";
+---
+>             $cmd  = "$bin/meryl -B -C -m $ms -threads 4 -segments 4 $verbose ";
+5917c5854
+<             $cmd  = "aprun -q -n 1 -d $merylThreads $bin/meryl -B -C -m $ms -threads $merylThreads -segments $merylThreads $verbose ";
+---
+>             $cmd  = "$bin/meryl -B -C -m $ms -threads 4 -segments 4 $verbose ";
+5928c5865
+<             $cmd = "aprun -q -n 1 $bin/mercy ";
+---
+>             $cmd  = "$bin/mercy ";
+5952c5889
+<             if (runCommand($termDir, "aprun -q -b -n 1 $perl $bin/asmToAGP.pl < $termDir/$asm.asm > $termDir/$asm.agp")) {
+---
+>             if (runCommand($termDir, "$perl $bin/asmToAGP.pl < $termDir/$asm.asm > $termDir/$asm.agp")) {
+5961c5898
+<                 if (runCommand($termDir, "aprun -q -n 1 $bin/gatekeeper -dumpfrg -allreads $wrk/$asm.gkpStore > $termDir/$asm.frg 2> $termDir/gatekeeper.err")) {
+---
+>                 if (runCommand($termDir, "$bin/gatekeeper -dumpfrg -allreads $wrk/$asm.gkpStore > $termDir/$asm.frg 2> $termDir/gatekeeper.err")) {
+5966c5903
+<             if (runCommand($termDir, "aprun -q -b -n 1 $perl $bin/ca2ace.pl $termDir/$asm.asm")) {
+---
+>             if (runCommand($termDir, "$perl $bin/ca2ace.pl $termDir/$asm.asm")) {
+5991c5928
+<                     $cmd = "aprun -q -n 1 $bin/gatekeeper ";
+---
+>                     $cmd  = "$bin/gatekeeper ";
+6057c5994
+<         $cmd = "aprun -q -n 1 $bin/gatekeeper";
+---
+>         $cmd  = "$bin/gatekeeper";
+6080c6017
+<         $cmd = "aprun -q -n 1 $bin/markUniqueUnique ";
+---
+>         $cmd  = "$bin/markUniqueUnique ";
