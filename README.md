@@ -2,11 +2,14 @@
 
 This is a patch file for Celera Assembler 8.3rc2 'runCA.pl' to run on a Cray system where a hybrid scheduling system, SLURM + ALPS, is in use.
 Celera 8.3rc2 does not come with SLURM support and Brett Whitty has done some work adding SLURM options to it:
+
        https://github.com/brettwhitty/bw-ca-tools
+
 However, that patch is suitable for native SLURM.
 With hybrid SLURM + ALPS, there needs to be some more tweaks.
  
 This patch is based on Brett Whitty's version and can be applied by
+
         patch runCA runCA_SLURM_ALPS_patch
 where runCA is the original perl script from wgs.
 
