@@ -29,8 +29,8 @@ which will generate a file called ecoli-untrimed.frg for later use.
 Then to run the trimming test, submit the following script by
         sbatch job_script_trim.slurm
 where job_script_trim.slurm is
-	
-	#!/bin/bash -l
+        
+        #!/bin/bash -l
       	#SBATCH --nodes=1 
       	#SBATCH --partition=workq
       	#SBATCH --time=1:00:00
