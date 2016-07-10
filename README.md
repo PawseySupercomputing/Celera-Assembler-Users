@@ -26,10 +26,12 @@ The patch has been tested in the following environement:
 - Data is Escherichia_coli_K12_MG1655, using uncorrected PacBio reads, with CA8.2
 
 Testing scripts are included. First, download the sample ecoli sequence data and prepare for the run
+	
 	./get_ecoli_test_data.sh
 which will generate a file called ecoli-untrimed.frg for later use.
 
 Then to run the trimming test, submit the following script by
+        
         sbatch job_script_trim.slurm
 where job_script_trim.slurm is
         
@@ -49,6 +51,7 @@ where job_script_trim.slurm is
       	aprun -n 1 runCA -p ecoli-trim -d ecoli-trim -s ecoli-trim.spec ecoli-untrimmed.frg
 
 Lastly, the assembly test is submitted by 
+	
 	sbatch job_script_assembly.slurm
 and the job script is
 
