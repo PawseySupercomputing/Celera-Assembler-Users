@@ -27,7 +27,7 @@ The patch has been tested in the following environement:
 
 Testing scripts are included. First, download the sample ecoli sequence data and prepare for the run
 	
-	./get_ecoli_test_data.sh
+        ./get_ecoli_test_data.sh
 which will generate a file called ecoli-untrimed.frg for later use.
 
 Then to run the trimming test, submit the following script by
@@ -52,7 +52,7 @@ where job_script_trim.slurm is
 
 Lastly, the assembly test is submitted by 
 	
-	sbatch job_script_assembly.slurm
+        sbatch job_script_assembly.slurm
 and the job script is
 
       	#!/bin/bash -l
