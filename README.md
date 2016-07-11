@@ -48,7 +48,7 @@ where job_script_trim.slurm is
       	# export PATH=/path/to/the/installed/runCA:$PATH 
       	# export PERL5LIB=/path/to/the/Exporter-Tiny/List-MoreUtils/Statistics-Descriptive/perl/modules:$PERL5LIB
 
-      	aprun -n 1 runCA -p ecoli-trim -d ecoli-trim -s ecoli-trim.spec ecoli-untrimmed.frg
+      	runCA -p ecoli-trim -d ecoli-trim -s ecoli-trim.spec ecoli-untrimmed.frg
 
 Lastly, the assembly test is submitted by 
 	
@@ -68,5 +68,5 @@ and the job script is
       	# export PATH=/path/to/the/installed/runCA:$PATH 
       	# export PERL5LIB=/path/to/the/Exporter-Tiny/List-MoreUtils/Statistics-Descriptive/perl/modules:$PERL5LIB
 
-      	aprun -n 1 runCA -p ecoli-assembly -d ecoli-assembly -s ecoli-assembly.spec ecoli-untrimmed.frg
+      	runCA -p ecoli-assembly -d ecoli-assembly -s ecoli-assembly.spec ecoli-untrimmed.frg
 
