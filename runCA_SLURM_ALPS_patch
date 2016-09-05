@@ -13,14 +13,14 @@
 <         setGlobal("gridEngineHoldOptionNoArray",  "--dependency=afterok:\"WAIT_TAG\""); 
 <         setGlobal("gridEngineSyncOption",         "");                                 
 <         setGlobal("gridEngineNameOption",         "-D `pwd` -J");                                   
-<         setGlobal("gridEngineArrayOption",        "-N ARRAY_JOBS"); 
+<         setGlobal("gridEngineArrayOption",        "--array ARRAY_JOBS"); 
 <         setGlobal("gridEngineTimeOption",         "-t ARRAY_WALLTIME"); 
 <         setGlobal("gridEngineArrayName",          "ARRAY_NAME\[ARRAY_JOBS\]");                      
 <         setGlobal("gridEngineOutputOption",       "-o");
 <         setGlobal("gridEnginePropagateCommand",   "scontrol update Dependency=afterok:\"WAIT_TAG\" job=");  
 <         setGlobal("gridEngineNameToJobIDCommand", "squeue -h -o\%F -n \"WAIT_TAG\" | uniq");  
 <         setGlobal("gridEngineNameToJobIDCommandNoArray", "squeue -h -o\%i -n \"WAIT_TAG\""); 
-<         setGlobal("gridEngineTaskID",             "ALPS_APP_PE");                         
+<         setGlobal("gridEngineTaskID",             "SLURM_ARRAY_TASK_ID");                         
 <         setGlobal("gridEngineArraySubmitID",      "%A_%a");                                     
 <         setGlobal("gridEngineJobID",              "SLURM_JOB_ID");                               
 <     }
